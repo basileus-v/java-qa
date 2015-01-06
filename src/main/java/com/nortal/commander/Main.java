@@ -22,14 +22,18 @@ public class Main {
                 System.out.println("Command not found: " + line);
                 continue;
             }
-            String result = command.execute(getArguments(line), environment);
+            String result = executeCommand(command, getArguments(line), environment);
             if (result != null) {
                 System.out.println(result);
             }
         }
     }
 
-    private static Command getCommand(String line) {
+    protected static String executeCommand(Command command, List<String> arguments, Environment environment) {
+        return command.execute(arguments, environment);
+    }
+
+    protected static Command getCommand(String line) {
         if (line.startsWith("eсho")) {
             return new Echo();
         } else if (line.startsWith("export")) {

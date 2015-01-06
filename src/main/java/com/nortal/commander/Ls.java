@@ -17,7 +17,7 @@ public class Ls implements Command {
         return listDirectory(baseDirectory);
     }
 
-    private File getBaseDirectory(List<String> arguments) {
+    protected File getBaseDirectory(List<String> arguments) {
         if (arguments.isEmpty()) {
             String workingDir = System.getProperty("user.dir");
             return new File(workingDir);
@@ -29,7 +29,7 @@ public class Ls implements Command {
         return dir;
     }
 
-    private static String listDirectory(File currentDir) {
+    protected static String listDirectory(File currentDir) {
         File[] files = currentDir.listFiles();
         List<String> fileNames = new ArrayList<>();
         for (File file : files) {

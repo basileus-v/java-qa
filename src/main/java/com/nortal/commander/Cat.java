@@ -1,41 +1,38 @@
 package com.nortal.commander;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.io.*;
 import java.util.List;
 
-public class Cat implements Command{
+public class Cat implements Command {
 
-	@Override
-	public void execute(List<String> arguments, Environment environment) {
-		String givenDir = arguments.get(0);
-		File currentDir = new File(givenDir);
-		if (currentDir.exists() && givenDir.contains("/")) {
-			readFromFile(currentDir);
-		} else {
-	
-		String fileName = arguments.get(0);
-		String workingDir = System.getProperty("user.dir");
-	    File file = new File(workingDir + "/" + fileName);
-		readFromFile(file);
-		}
-	}
+    @Override
+    public String execute(List<String> arguments, Environment environment) {
+        return readFromFile(new File(arguments.get(0)));
+    }
 
-	private void readFromFile(File file) {
-		FileInputStream fis = null;
-		int oneByte;
-		try {
-			fis = new FileInputStream(file);
-			while ((oneByte = fis.read()) != -1) {
-				System.out.write(oneByte);
-			}
-		} catch (IOException e) {
-			System.out.println("no such file in current directory or path is incorrect (usage: cat C:/path/to/file/somefile.txt)!");
-			
-		}
-		System.out.flush();
-		System.out.println();
-	}
+    private String readFromFile(File file) {
+        char[] buff = new char[1024];
+        StringWriter sw = new StringWriter();
+        FileInputStream fis = null;
+        BufferedReader bufferReader = null;
+        try {
+            fis = new FileInputStream(file);
+            bufferReader = new BufferedReader(new InputStreamReader(fis, "UTF-8"));
+            int n;
+            while ((n = bufferReader.read(buff)) != -1) {
+                sw.write(buff, 0, n);
+            }
+            return sw.toString();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            try {
+                sw.close();
+                bufferReader.close();
+            } catch (IOException e) {
+                //ignore
+            }
+        }
+        return null;
+    }
 }

@@ -1,55 +1,51 @@
 package com.nortal.commander;
 
-import java.io.FileNotFoundException;
-import java.io.PrintWriter;
-import java.io.UnsupportedEncodingException;
+import java.io.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
 public class Echo implements Command {
     @Override
-    public void execute(List<String> arguments, Environment environment) {
-    	for(String arg : arguments){
-    		if(arg.startsWith("$")){
-    			String key = arg.substring(1);
-    			String value = environment.getMap().get(key);
-    			System.out.println(value);
-    		} else if (arg.equals(">")) {
-    			String fileName = arguments.get(arguments.size()-1);
-    			PrintWriter writer = null;
-    			
-				try {
-					writer = new PrintWriter(fileName, "UTF-8");
-				} catch (FileNotFoundException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				} catch (UnsupportedEncodingException e) {
-					// TODO Auto-generated catch block
-					e.printStackTrace();
-				}
-				for (String argum : arguments){
-					if(argum.equals(">")){
-						break;
-					}
-					else if(argum.startsWith("$")){
-		    			String key2 = argum.substring(1);
-		    			String value2 = environment.getMap().get(key2);
-		    			writer.println(value2);
-					} else {
-						writer.println(argum);
-					}
-						
-					
-				}
-    			
-    			writer.close();
-    			break;
-    			
-    		}
-    		else if (!arguments.contains(">")){
-    			System.out.print(arg + " ");
-    		}
-    	}
-    	System.out.println("");
+    public String execute(List<String> arguments, Environment environment) {
+        Writer writer;
+        int i = arguments.indexOf(">");
+        if (i > -1) {
+            try {
+                writer = new PrintWriter(arguments.get(i + 1), "UTF-8");
+            } catch (FileNotFoundException e) {
+                return "Error writing to file";
+            } catch (UnsupportedEncodingException e) {
+                return "Error writing to file";
+            }
+        } else {
+            writer = new StringWriter();
+        }
+
+        int k;
+        int lastArgumentIndex = i + 2 > 0 ? arguments.size() : i;
+        for (k = 0; k < lastArgumentIndex; k++) {
+            String resolvedArgument = arguments.get(k);
+            if (resolvedArgument.startsWith("$")) {
+                String key = resolvedArgument.substring(0);
+                resolvedArgument += environment.getProperties().get(key);
+            }
+            try {
+                writer.write(resolvedArgument + " ");
+            } catch (IOException e) {
+                return "Error writing to file";
+            }
+        }
+
+        try {
+            writer.flush();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        if (writer instanceof StringWriter) {
+            return writer.toString();
+        }
+        return "Output is redirected to file";
     }
+
 }

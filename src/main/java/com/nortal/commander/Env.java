@@ -1,16 +1,20 @@
 package com.nortal.commander;
 
+import org.apache.commons.lang3.StringUtils;
+
+import java.util.ArrayList;
 import java.util.List;
 
-public class Env implements Command{
+public class Env implements Command {
 
-	@Override
-	public void execute(List<String> arguments, Environment environment) {
-		for (String key : environment.getMap().keySet()) {
-    	    String value = environment.getMap().get(key);
-    	    System.out.println(key + "=" + value);
-    	}
-		
-	}
+    @Override
+    public String execute(List<String> arguments, Environment environment) {
+        List<String> result = new ArrayList<>();
+        for (String key : environment.getProperties().keySet()) {
+            String value = environment.getProperties().get(key);
+            result.add(key + "=" + value);
+        }
+        return StringUtils.join(result, System.lineSeparator());
+    }
 
 }

@@ -1,47 +1,42 @@
 package com.nortal.commander;
 
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 
-public class Ls implements Command{
+public class Ls implements Command {
 
-	@Override
-	public void execute(List<String> arguments, Environment environment) {
-			if(arguments.isEmpty()){
-				String workingDir = System.getProperty("user.dir");
-			      File currentDir = new File(workingDir);
-			      displayDirectoryContents(currentDir);
-			} else {
-				String givenDir = arguments.get(0);
-				File currentDir = new File(givenDir);
-				if (!currentDir.exists()) {
-					try {
-						throw new FileNotFoundException("No files in given directory");
-					} catch (FileNotFoundException e) {
-						System.out.println("Provide correct path: c:\\path\\to\\dir");
-					}
-				} else {
-					displayDirectoryContents(currentDir);
-				}
-			    
-			} 
-	      
-		
-	}
-	
-	private static void displayDirectoryContents(File currentDir) {
-		File[] files = currentDir.listFiles();
-		for (File file : files) {
-			if (file.isDirectory()) {
-				System.out.println("directory:" + file.getName());
-				displayDirectoryContents(file);
-			} else {
-				System.out.println("     file:" + file.getName());
-			}
-		}
-		
-	}
+    @Override
+    public String execute(List<String> arguments, Environment environment) {
+        File baseDirectory = getBaseDirectory(arguments);
+        if (baseDirectory == null) {
+            return "Directory does not exist.";
+        }
+        return listDirectory(baseDirectory);
+    }
+
+    private File getBaseDirectory(List<String> arguments) {
+        if (arguments.isEmpty()) {
+            String workingDir = System.getProperty("user.dir");
+            return new File(workingDir);
+        }
+        File dir = new File(arguments.get(0));
+        if (!dir.exists()) {
+            return null;
+        }
+        return dir;
+    }
+
+    private static String listDirectory(File currentDir) {
+        File[] files = currentDir.listFiles();
+        List<String> fileNames = new ArrayList<>();
+        for (File file : files) {
+            fileNames.add(file.getName() + (file.isDirectory() ? "/" : ""));
+        }
+        return StringUtils.join(fileNames, System.lineSeparator());
+
+    }
 
 }

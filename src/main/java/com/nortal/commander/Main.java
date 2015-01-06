@@ -34,7 +34,7 @@ public class Main {
     }
 
     protected static Command getCommand(String line) {
-        if (line.startsWith("eсho")) {
+        if (line.startsWith("echo")) {
             return new Echo();
         } else if (line.startsWith("export")) {
             return new Export();

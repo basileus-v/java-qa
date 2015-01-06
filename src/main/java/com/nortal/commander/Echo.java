@@ -22,12 +22,12 @@ public class Echo implements Command {
         }
 
         int k;
-        int lastArgumentIndex = i + 2 > 0 ? arguments.size() : i;
+        int lastArgumentIndex = i < 0 ? arguments.size() : i;
         for (k = 0; k < lastArgumentIndex; k++) {
             String resolvedArgument = arguments.get(k);
             if (resolvedArgument.startsWith("$")) {
-                String key = resolvedArgument.substring(0);
-                resolvedArgument += environment.getProperties().get(key);
+                String key = resolvedArgument.substring(1);
+                resolvedArgument = environment.getProperties().get(key);
             }
             try {
                 writer.write(resolvedArgument + " ");

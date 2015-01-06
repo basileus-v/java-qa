@@ -8,6 +8,9 @@ public class Export implements Command {
     @Override
     public String execute(List<String> arguments, Environment environment) {
         for (String actualElement : arguments) {
+            if (!actualElement.contains("=")) {
+                continue;
+            }
             String[] keyValue = actualElement.split("=");
             environment.addProperty(keyValue[0], keyValue[1]);
         }

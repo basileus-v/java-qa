@@ -1,10 +1,11 @@
 package com.nortal.commander;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 public class Environment {
-    private Map<String, String> properties = new HashMap<String, String>();
+    private Map<String, String> properties = new LinkedHashMap<>();
     private final long upTimeStart = System.currentTimeMillis();
 
     public Map<String, String> getProperties() {
